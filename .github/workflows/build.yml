@@ -6,6 +6,7 @@ on:
     branches:
       - "master"
       - "sidechain"
+    workflow_dispatch:
 
 jobs: 
   build: 
@@ -88,3 +89,32 @@ jobs:
           if-no-files-found: error
           # Asterisk is for matching both 'sidegeth' and 'sidegeth.exe'
           path: work/build/bin/sidegeth*
+
+
+  upload-artifacts-to-releases-drivechain-info:
+    name: Upload artifacts to releases.drivechain.info
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.repository_owner == 'LayerTwo-Labs'
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Zip artifacts
+        run: |
+          mv binaries-Linux ethSide-latest-linux
+          zip -r ethSide-latest-linux.zip ethSide-latest-linux
+          mv binaries-macOS ethSide-latest-macos
+          zip -r ethSide-latest-macOS.zip ethSide-latest-macos
+          mv binaries-Windows ethSide-latest-windows
+          zip -r ethSide-latest-windows.zip ethSide-latest-windows
+
+      - name: Upload artifacts to releases.drivechain.info
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        with:
+          host: 45.33.96.47
+          user: root
+          pass: ${{ secrets.RELEASES_SERVER_PW }}
+          port: 22
+          scp: |
+            'ethSide-latest-*.zip' => '/var/www/html/'
