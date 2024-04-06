@@ -102,12 +102,14 @@ jobs:
 
       - name: Zip artifacts
         run: |
-          mv binaries-Linux ethSide-latest-linux
-          zip -r ethSide-latest-linux.zip ethSide-latest-linux
-          mv binaries-macOS ethSide-latest-macos
-          zip -r ethSide-latest-macOS.zip ethSide-latest-macos
-          mv binaries-Windows ethSide-latest-windows
-          zip -r ethSide-latest-windows.zip ethSide-latest-windows
+          mv binaries-Linux L2-S6-EthSide-latest-x86_64-unknown-linux-gnu
+          zip -r L2-S6-EthSide-latest-x86_64-unknown-linux-gnu.zip L2-S6-EthSide-latest-x86_64-unknown-linux-gnu
+
+          mv binaries-macOS L2-S6-EthSide-latest-x86_64-apple-darwin
+          zip -r L2-S6-EthSide-latest-x86_64-apple-darwin.zip L2-S6-EthSide-latest-x86_64-apple-darwin
+
+          mv binaries-Windows L2-S6-EthSide-latest-x86_64-w64-mingw32
+          zip -r L2-S6-EthSide-latest-x86_64-w64-mingw32.zip L2-S6-EthSide-latest-x86_64-w64-mingw32
 
       - name: Upload artifacts to releases.drivechain.info
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
@@ -117,4 +119,4 @@ jobs:
           pass: ${{ secrets.RELEASES_SERVER_PW }}
           port: 22
           scp: |
-            'ethSide-latest-*.zip' => '/var/www/html/'
+            'L2-S6-*.zip' => '/var/www/html/'
